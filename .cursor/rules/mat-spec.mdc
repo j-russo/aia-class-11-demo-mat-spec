@@ -1,0 +1,253 @@
+---
+alwaysApply: true
+---
+# Material Specification Tool - Cursor Rules
+
+## Project Context
+This is a Python CLI tool for architects that analyzes architectural visualization images and generates professional material specifications. Built for educational purposes as part of "AI for Architects" Class 12 (Custom Tool Development).
+
+## Target Users
+- Architecture students and professionals
+- Computational design practitioners
+- Users with basic Python knowledge but not expert programmers
+- Will be demonstrated live in a 90-minute class
+
+## Code Style & Standards
+
+### Python Best Practices
+- Use Python 3.10+ features where appropriate
+- Type hints for all function signatures
+- Docstrings for all functions (Google style)
+- Keep functions focused and single-purpose
+- Maximum function length: ~50 lines
+- Use pathlib for file operations (not os.path)
+
+### Naming Conventions
+- Functions: snake_case (e.g., `analyze_images()`)
+- Classes: PascalCase (e.g., `SpecGenerator`)
+- Constants: UPPER_SNAKE_CASE (e.g., `API_TIMEOUT`)
+- Private methods: prefix with `_` (e.g., `_parse_response()`)
+
+### Error Handling
+- Always use try/except for API calls
+- Provide helpful error messages for users (non-technical language)
+- Gracefully handle missing files, invalid images, network issues
+- Log errors but don't crash the application
+- Example: "Could not analyze image_01.png - file may be corrupted"
+
+## Architectural Terminology
+
+### Use Correct Domain Language
+- "Specifications" not "specs" in user-facing text
+- "CSI MasterFormat divisions" for spec organization
+- "Embodied carbon" not "carbon footprint"
+- "Curtain wall" not "glass wall system"
+- "Cladding" not "exterior covering"
+
+### Material Categories
+When identifying materials, use standard architectural terms:
+- Glass types: curtain wall, storefront, vision glass, spandrel, low-E
+- Metals: aluminum, steel, copper, zinc, metal panel systems
+- Masonry: concrete, brick, stone (natural/manufactured), CMU
+- Wood: timber, wood cladding, engineered lumber
+- Composites: fiber cement, metal composite panels, GFRC
+
+## API Integration Guidelines
+
+### Claude API Usage
+- Always use latest model: `claude-sonnet-4-20250514`
+- Set reasonable max_tokens (1024 for analysis, 4096 for generation)
+- Include proper error handling for rate limits
+- Cache API responses during development to save costs
+- Always encode images as base64 for vision API
+
+### Prompt Engineering
+- Be specific about architectural context
+- Request structured outputs (lists, sections, etc.)
+- Include design brief context in prompts
+- Ask for professional specification language
+- Request acknowledgment of limitations/assumptions
+
+### Example Good Prompt Structure
+```
+You are an architectural specification writer analyzing design visualizations.
+
+PROJECT CONTEXT:
+[brief text]
+
+TASK:
+Identify materials visible in this image with:
+1. Material type (use standard architectural terms)
+2. Visual characteristics
+3. Estimated coverage
+4. Specific observations
+
+Format as structured list.
+```
+
+## CLI Design Principles
+
+### User Experience
+- Show progress for long operations (use `rich` Progress)
+- Provide clear success/error messages
+- Default to sensible options (don't require all flags)
+- Output absolute file paths so users can find results
+- Use colors/formatting to highlight important info (but keep it subtle)
+
+### Terminal Output Style
+- Blue for headers and section titles
+- Green for success messages
+- Yellow for warnings
+- Red for errors
+- Cyan for progress indicators
+- Use tables for structured data (material analysis)
+
+### Argument Design
+- Required: `--images` and `--brief`
+- Optional: `--output`, `--sustainability`, `--alternatives`
+- Use click for argument parsing
+- Provide helpful `--help` text
+- Validate paths before processing
+
+## File Organization
+
+### Keep Clean Separation
+- `material_spec.py` - CLI entry point only (thin layer)
+- `utils/vision.py` - All Claude vision API logic
+- `utils/spec_generator.py` - Specification generation logic
+- `utils/formatter.py` - Output formatting and display
+- `config.py` - Prompts, constants, settings
+
+### Don't Mix Concerns
+- API calls stay in utils modules
+- Terminal UI stays in main CLI or formatter
+- Business logic separate from presentation
+- Configuration separate from code
+
+## Educational Considerations
+
+### Code Should Be Readable
+- Extensive comments explaining architectural concepts
+- Clear variable names (no abbreviations unless standard)
+- Break complex operations into named functions
+- Add comments for non-obvious API usage
+
+### Example Comment Style
+```python
+# CSI MasterFormat Division 08 covers doors, windows, and glazing systems
+# We organize specifications by division for professional consistency
+divisions = {
+    '04': 'Masonry',
+    '05': 'Metals', 
+    '06': 'Wood, Plastics, and Composites',
+    '08': 'Openings'
+}
+```
+
+## Demo & Testing Considerations
+
+### Must Be Demo-Proof
+- Handle common errors gracefully (bad images, API failures)
+- Provide clear progress indicators
+- Cache results during development
+- Test with actual architectural images (not random photos)
+- Verify outputs look professional
+
+### Performance Expectations
+- 3-4 images should process in 30-60 seconds
+- Don't block terminal during API calls (show progress)
+- Generate specs in under 10 seconds once analysis is complete
+
+## Dependencies Management
+
+### Keep Minimal
+Only include truly necessary packages:
+- `anthropic` - Claude API (required)
+- `click` - CLI arguments (required)
+- `rich` - Terminal formatting (required)
+- `python-dotenv` - Environment variables (required)
+- `Pillow` - Image handling (required)
+
+Don't add unless essential:
+- PDF generation can be optional
+- Markdown is built-in (don't need a library)
+- JSON is standard library
+
+## Security & Privacy
+
+### API Keys
+- NEVER hardcode API keys
+- Always use environment variables
+- Provide `.env.example` with placeholder
+- Add `.env` to `.gitignore`
+
+### Image Handling
+- Don't store uploaded images permanently
+- Don't log image data
+- Respect user privacy (these are project files)
+
+## Output Quality Standards
+
+### Specification Documents Should
+- Use professional architectural language
+- Organize by CSI divisions where applicable
+- Include appropriate disclaimers ("preliminary", "based on design intent")
+- Format consistently (markdown headers, lists, sections)
+- Be ready to copy into actual project documentation
+
+### Avoid
+- Generic "AI-generated" language
+- Overly technical jargon without explanation
+- Absolute statements without qualifiers
+- Inventing specific product names (unless connected to real database)
+
+## When Suggesting Code
+
+### Prioritize
+1. Correctness over cleverness
+2. Readability over brevity
+3. Error handling over happy-path only
+4. User experience over developer convenience
+5. Educational value over optimization
+
+### Always Consider
+- Will architecture students understand this?
+- Could this fail during a live demo?
+- Is the error message helpful?
+- Does this follow architectural terminology?
+- Is this the simplest solution that works?
+
+## Testing Approach
+
+### Manual Testing Required For
+- Actual architectural images (varied styles)
+- Different brief formats and lengths
+- Missing or corrupt images
+- Network failures
+- Invalid API keys
+
+### Edge Cases to Handle
+- Empty image folder
+- Brief file not found
+- Images too large (>5MB)
+- API rate limits
+- Malformed API responses
+
+## Comments on AI-Generated Code
+
+When reviewing AI suggestions:
+- Verify API calls match current Anthropic docs
+- Check that architectural terminology is correct
+- Ensure error messages are user-friendly
+- Confirm file paths use pathlib
+- Validate that outputs are professional quality
+
+## Project Timeline Awareness
+
+This needs to be built in 1 day:
+- Prioritize core functionality
+- Skip nice-to-have features
+- Keep complexity low
+- Optimize for demo reliability over feature completeness
+- Better to have 3 features that work than 10 that are buggy
+

@@ -1,0 +1,23 @@
+PROJECT: Modern Office Building
+ARCHITECT: Design Studio
+LOCATION: Urban Core, Mixed-Use District
+
+PROJECT DESCRIPTION:
+A contemporary 8-story office building designed to achieve LEED Gold certification. 
+The building features a transparent ground floor with retail spaces, and office floors 
+above with flexible floor plans. The design emphasizes natural light, energy efficiency, 
+and a connection to the urban context.
+
+DESIGN INTENT:
+The material palette reflects a modern, sustainable approach to commercial architecture. 
+The building should feel light and transparent while maintaining thermal performance. 
+Materials should be durable, low-maintenance, and contribute to the building's 
+environmental goals.
+
+KEY REQUIREMENTS:
+- High-performance glazing systems for energy efficiency
+- Durable exterior cladding materials
+- Sustainable material sourcing where possible
+- Materials suitable for urban environment (durability, maintenance)
+- Aesthetic that complements surrounding context
+
